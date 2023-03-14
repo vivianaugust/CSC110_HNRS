@@ -1,3 +1,12 @@
+from urllib.request import urlopen
+import datetime
+import json
+
+url = "https://api.weather.gov/gridpoints/TWC/90,49/forecast/hourly"
+response = urlopen(url)
+data = json.loads(response.read())
+
+
 def draw_forecast(day_of_week, daily_high, daily_low, short_summary):
     """
     Takes the daily high and low temps, and a short summary and outputs a text based visual
@@ -13,7 +22,7 @@ def draw_forecast(day_of_week, daily_high, daily_low, short_summary):
         print(day_of_week[i])
         print('High:', daily_high[i])
         print('Low:', daily_low[i])
-        if short_summary[i] == 'showers and thunderstorms':
+        if short_summary[i] == "showers and thunderstorms":
             print(r"""
          _, .--.
         (  / (  '-.
@@ -29,7 +38,7 @@ def draw_forecast(day_of_week, daily_high, daily_low, short_summary):
                 \.
             -.'.`\.'.-
             Be Careful!""")
-        if short_summary[i] == 'sunny':
+        elif short_summary[i] == "Sunny":
             print(r"""
 
                         .   |
@@ -57,7 +66,9 @@ def draw_forecast(day_of_week, daily_high, daily_low, short_summary):
                             |
                             |
             Get outside and enjoy that sunshine!""")
-        if short_summary[i] == 'partly cloudy':
+        elif short_summary[i] == "Partly Cloudy" or short_summary[i] == "Mostly Sunny" \
+                or short_summary[i] == "Partly Sunny":
+            print(short_summary[i])
             print(r"""                 .
                   |					
          .               /		     /	
@@ -78,37 +89,33 @@ def draw_forecast(day_of_week, daily_high, daily_low, short_summary):
     --..,___.--,--'`,---..-.--+--.,,-,,..._.--..-._.-a:f--.
 
             Shade and sun, what could be better!""")
-        if short_summary[i] == 'windy':
+        elif short_summary[i] == "Snow Showers Likely":
             print(r"""
-                                                     ___    ,'''''''.
-                                        ,'''   '''''      `.
-                                       ,'        _.         `._
-                                      ,'       ,'              `''''.
-                                     ,'    .-""`.    ,-'            `.
-                                    ,'    (        ,'                :
-                                  ,'     ,'           __,            `.
-                            ,'''''     .' ;-.    ,  ,'  \             `''''.
-                          ,'           `-(   `._(_,'     )_                `.
-                         ,'         ,---. \ @ ;   \ @ _,'                   `.
-                    ,-""'         ,'      ,--'-    `;'                       `.
-                   ,'            ,'      (      `. ,'                          `.
-                   ;            ,'        \    _,','                            `.
-                  ,'            ;          `--'  ,'                              `.
-                 ,'             ;          __    (                    ,           `.
-                 ;              `____...  `      `.                  ,'           ,'
-                 ;    ...----'''' )  _.-  .      `.                ,'    ,'    ,'
-    _....----''' '.        _..--'_.-:.-' .'        `.             ,''.   ,' `--'
-                  `' .-'`-.:..___...--' `-._      ,-''   `-'
-            _.--'       _.-'    .'   .' .'               `'''''
-      __.-''        _.-'     .-'   .'  /
-     '          _.-' .-'  .-'        .'
-            _.-'  .-'  .-' .'  .'   /
-        _.-'      .-'   .-'  .'   .'
-    _.-'       .-'    .'   .'    /
-           _.-'    .-'   .'    .'
-        .-'            .'''
-        Hold on to your hats!""")
-        if short_summary[i] == "raining":
+                                ()
+                                /\
+                               //\\
+                              <<  >>
+                          ()   \\//   ()
+                ()._____   /\   \\   /\   _____.()
+                   \.--.\ //\\ //\\ //\\ /.--./
+                    \\__\\/__\//__\//__\\/__//
+                     '--/\\--//\--//\--/\\--'
+                        \\\\///\\//\\\////
+                    ()-= >>\\< <\\> >\\<< =-()
+                        ////\\\//\\///\\\\
+                     .--\\/--\//--\//--\//--.
+                    //""/\\""//\""//\""//\""\\
+                   /'--'/ \\// \\// \\// \'--'\
+                 ()`'''`   '\/   //   \/   `'""`().
+                          '()   //\.\.   ()
+                              '<<  >>
+                                \\//
+                                 \/
+                                 ()
+                Do you wanna to build a snowman?""")
+        elif short_summary[i] == "Rain Showers" or short_summary[i] == "Chance Rain Showers" \
+                or short_summary[i] == "Rain Showers Likely":
+            print(short_summary[i])
             print(r"""
          |       |        |       | |
      ' |   |   |     '  |      '      
@@ -135,7 +142,8 @@ def draw_forecast(day_of_week, daily_high, daily_low, short_summary):
              |/\|    [_][_]      |    
     ''''''''''''''''''''''''''''''''''
     Today's a great day for a cozy movie :)""")
-        if short_summary[i] == "cloudy":
+        elif short_summary[i] == "Mostly Cloudy":
+            print(short_summary[i])
             print(r"""
                                 _                                  
                   (`  ).                   _           
@@ -151,19 +159,89 @@ def draw_forecast(day_of_week, daily_high, daily_low, short_summary):
 
     --..,___.--,--'`,---..-.--+--.,,-,,..._.--..-._.-.:.--.
     'I've got sunshine, on a cloudy day,' The Temptations.""")
+        else:
+            print(short_summary[i])
         print('__________________________________________')
         i += 1
     print('Ascii art from https://www.asciiart.eu/nature/clouds')
 
 
-def main():
-    day_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',
-                   'Monday', 'Tuesday', 'Wednesday']
-    daily_high = [51, 54, 65, 72, 73, 61, 62, 58, 65, 70]
-    daily_low = [40, 38, 52, 57, 55, 48, 32, 32, 42, 47]
-    short_summary = ["showers and thunderstorms", 'sunny', 'cloudy', 'partly cloudy', 'raining',
-                     'sunny', 'windy', 'cloudy', 'showers and thunderstorms', 'partly cloudy']
-    draw_forecast(day_of_week, daily_high, daily_low, short_summary)
+def high_low(init_period):
+    """
+    loops through the 24 hours in a day, 12 periods and finds the max temp
+    :param init_period: starting point
+    :return daily_high: max temp int
+    """
+    i = init_period
+    final = init_period + 11
+    temps = []
+    while i <= final:
+        temps.append(data["properties"]["periods"][i]["temperature"])
+        i += 1
+    low = temps[0]
+    high = temps[1]
+    i = init_period
+    while i <= final:
+        spot = i - init_period
+        if temps[spot] <= low:
+            low = temps[spot]
+        else:
+            high = temps[spot]
+        i += 1
+    return [high, low]
 
-    
-main()
+
+def main():
+    days_of_week = [datetime.datetime(int(data["properties"]["periods"][0]["startTime"][:4]),
+                                      int(data["properties"]["periods"][0]["startTime"][5:7]),
+                                      int(data["properties"]["periods"][0]["startTime"][8:10])).strftime('%A'),
+                    datetime.datetime(int(data["properties"]["periods"][12]["startTime"][:4]),
+                                      int(data["properties"]["periods"][12]["startTime"][5:7]),
+                                      int(data["properties"]["periods"][12]["startTime"][8:10])).strftime('%A'),
+                    datetime.datetime(int(data["properties"]["periods"][36]["startTime"][:4]),
+                                      int(data["properties"]["periods"][36]["startTime"][5:7]),
+                                      int(data["properties"]["periods"][36]["startTime"][8:10])).strftime('%A'),
+                    datetime.datetime(int(data["properties"]["periods"][36]["startTime"][:4]),
+                                      int(data["properties"]["periods"][36]["startTime"][5:7]),
+                                      int(data["properties"]["periods"][36]["startTime"][8:10])).strftime('%A'),
+                    datetime.datetime(int(data["properties"]["periods"][48]["startTime"][:4]),
+                                      int(data["properties"]["periods"][48]["startTime"][5:7]),
+                                      int(data["properties"]["periods"][48]["startTime"][8:10])).strftime('%A'),
+                    datetime.datetime(int(data["properties"]["periods"][60]["startTime"][:4]),
+                                      int(data["properties"]["periods"][60]["startTime"][5:7]),
+                                      int(data["properties"]["periods"][60]["startTime"][8:10])).strftime('%A'),
+                    datetime.datetime(int(data["properties"]["periods"][72]["startTime"][:4]),
+                                      int(data["properties"]["periods"][72]["startTime"][5:7]),
+                                      int(data["properties"]["periods"][72]["startTime"][8:10])).strftime('%A'),
+                    datetime.datetime(int(data["properties"]["periods"][84]["startTime"][:3]),
+                                      int(data["properties"]["periods"][84]["startTime"][5:7]),
+                                      int(data["properties"]["periods"][84]["startTime"][8:10])).strftime('%A'),
+                    datetime.datetime(int(data["properties"]["periods"][96]["startTime"][:4]),
+                                      int(data["properties"]["periods"][96]["startTime"][5:7]),
+                                      int(data["properties"]["periods"][96]["startTime"][8:10])).strftime('%A'),
+                    datetime.datetime(int(data["properties"]["periods"][108]["startTime"][:4]),
+                                      int(data["properties"]["periods"][108]["startTime"][5:7]),
+                                      int(data["properties"]["periods"][108]["startTime"][8:10])).strftime('%A')]
+    daily_highs = [int(high_low(0)[0]), int(high_low(12)[0]), int(high_low(24)[0]), int(high_low(36)[0]),
+                   int(high_low(48)[0]), int(high_low(60)[0]), int(high_low(72)[0]), int(high_low(84)[0]),
+                   int(high_low(96)[0]), int(high_low(108)[0])]
+    daily_lows = [int(high_low(0)[1]), int(high_low(12)[1]), int(high_low(24)[1]), int(high_low(36)[1]),
+                  int(high_low(48)[1]), int(high_low(60)[1]), int(high_low(72)[1]),
+                  int(high_low(84)[1]), int(high_low(96)[1]), int(high_low(108)[1])]
+    short_summaries = [data["properties"]["periods"][0]["shortForecast"],
+                       data["properties"]["periods"][12]["shortForecast"],
+                       data["properties"]["periods"][24]["shortForecast"],
+                       data["properties"]["periods"][36]["shortForecast"],
+                       data["properties"]["periods"][48]["shortForecast"],
+                       data["properties"]["periods"][60]["shortForecast"],
+                       data["properties"]["periods"][72]["shortForecast"],
+                       data["properties"]["periods"][84]["shortForecast"],
+                       data["properties"]["periods"][96]["shortForecast"],
+                       data["properties"]["periods"][108]["shortForecast"]]
+    draw_forecast(days_of_week, daily_highs, daily_lows, short_summaries)
+
+
+print(datetime.datetime(int(data["properties"]["periods"][24]["startTime"][:4]),
+                        int(data["properties"]["periods"][24]["startTime"][5:7]),
+                        int(data["properties"]["periods"][24]["startTime"][8:10])).strftime('%A'))
+
