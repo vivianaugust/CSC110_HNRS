@@ -192,6 +192,28 @@ def high_low(init_period):
 
 
 def main():
+    all_periods = data["properties"]["periods"] # list with all periods
+    
+    previous_weekday = int(data["properties"]["periods"][0]["startTime"][:4]),
+                                      int(data["properties"]["periods"][0]["startTime"][5:7]),
+                                      int(data["properties"]["periods"][0]["startTime"][8:10])).strftime('%A')
+    
+    # create list with finalized days to visualize
+    selected_periods = []
+    # for each item in the list of periods
+    for p in all_periods:
+        # grab that item
+        current_weekday = datetime.datetime(int(p["startTime"][:4]),
+                                      int(p["startTime"][5:7]),
+                                      int(p["startTime"][8:10])).strftime('%A')
+        # is it a different day?
+        if current_weekday != previous_weekday:
+            # save 
+            selected_periods.append(previous_weekday)
+            previous_weekday = current_weekday
+        
+        
+    
     days_of_week = [datetime.datetime(int(data["properties"]["periods"][0]["startTime"][:4]),
                                       int(data["properties"]["periods"][0]["startTime"][5:7]),
                                       int(data["properties"]["periods"][0]["startTime"][8:10])).strftime('%A'),
