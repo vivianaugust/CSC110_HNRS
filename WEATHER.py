@@ -40,6 +40,7 @@ class Weather:
         """
         i = 0
         print('Your forecast for the next 6 days :)\n_____________________________________\n')
+        # Looping through the days of the week, day of the week, print the high, low, and image/short summary.
         while i < len(self.day_of_week):
             print(self.day_of_week[i])
             print('High:', self.daily_high[i])
@@ -186,6 +187,7 @@ class Weather:
                 print(self.short_summary[i])
             print('__________________________________________')
             i += 1
+        # Give credit to the artists.
         print('Ascii art from https://www.asciiart.eu/nature/clouds')
 
     def graph(self):
@@ -201,43 +203,64 @@ class Weather:
                       'smile.png', 'smile2.png', 'smile3.png', 'smile4.png', 'smile5.png', 'smile6.png',
                       'inkpx-word-art.png', 'inkpx-word-art2.png', 'inkpx-word-art3.png', 'inkpx-word-art4.png',
                       'inkpx-word-art5.png', 'inkpx-word-art6.png']
+        # scales stores the downsizing integers for each image of the days of the week.
         scales = []
+        # images stores all the files associated with each image for the day of the week.
         images = {}
+        # printing is a list containing the chosen file for each image in images.
         printing = []
+        # Locations is a list of the y-coordinates for the weather for each day of the week.
         locations = [215, 305, 395, 485, 575, 665]
+        # create the canvas to add graphics to
         gui = graphics(1480, 790, 'Weather')
+        # choosing the background image based on if isDaytime in first period of data is true or false.
         if data["properties"]["periods"][1]["isDaytime"]:
             gui.image(0, 0, 1, 3, "sky.png")
         else:
             gui.image(0, 0, 1, 3, "night.png")
+        # two rectangles to organize the information for the current weekday and the upcoming weekdays.
         gui.rectangle(769, 215, 515, 545, 'lavender blush')
         gui.rectangle(164, 215, 515, 545, 'lavender blush')
+        # create the logo for pink sky
         gui.image(565, 0, 1, 2, "pngegg.png")
         gui.image(695, 50, 1, 30, "moon.png")
         gui.image(615, 100, 1, 5, "l.png")
+        # loops through the list of short summaries for the next 6 days, and appends the images and scales lists.
         i = 0
         while i < len(self.short_summary):
             if self.short_summary[i] == "Showers And Thunderstorms":
                 image = [all_images[0], all_images[1], all_images[2], all_images[3], all_images[4], all_images[5]]
-                images.update({'image' + str(i): image})
+                if image not in list(images.values()):
+                    images.update({image[0]: image})
+                else:
+                    images.update({'repeat' + str(i): image[0]})
                 scale = 1
                 scales.append(scale)
             elif self.short_summary[i] == "Sunny":
                 image = [all_images[6], all_images[7], all_images[8], all_images[9], all_images[10], all_images[11]]
-                images.update({'image' + str(i): image})
+                if image not in list(images.values()):
+                    images.update({image[0]: image})
+                else:
+                    images.update({'repeat' + str(i): image[0]})
                 scale = 29
                 scales.append(scale)
             elif self.short_summary[i] == "Partly Cloudy" or self.short_summary[i] == "Mostly Sunny" \
                     or self.short_summary[i] == "Partly Sunny":
                 image = [all_images[12], all_images[13], all_images[14], all_images[15], all_images[16],
                          all_images[17]]
-                images.update({'image' + str(i): image})
+                if image not in list(images.values()):
+                    images.update({image[0]: image})
+                else:
+                    images.update({'repeat' + str(i): image[0]})
                 scale = 32
                 scales.append(scale)
             elif self.short_summary[i] == "Snow Showers Likely":
                 image = [all_images[18], all_images[19], all_images[20], all_images[21], all_images[22],
                          all_images[23]]
-                images.update({'image' + str(i): image})
+                if image not in list(images.values()):
+                    images.update({image[0]: image})
+                else:
+                    images.update({'repeat' + str(i): image[0]})
                 scale = 3
                 scales.append(scale)
             elif self.short_summary[i] == "Rain Showers" or self.short_summary[i] == "Chance Rain Showers" \
@@ -245,38 +268,59 @@ class Weather:
                     self.short_summary[i] == "Slight Chance Rain Showers":
                 image = [all_images[24], all_images[25], all_images[26], all_images[27], all_images[28],
                          all_images[29]]
-                images.update({'image' + str(i): image})
+                if image not in list(images.values()):
+                    images.update({image[0]: image})
+                else:
+                    images.update({'repeat' + str(i): image[0]})
                 scale = 27
                 scales.append(scale)
             elif self.short_summary[i] == "Mostly Cloudy":
                 image = [all_images[30], all_images[31], all_images[32], all_images[33], all_images[34],
                          all_images[35]]
-                images.update({'image' + str(i): image})
+                if image not in list(images.values()):
+                    images.update({image[0]: image})
+                else:
+                    images.update({'repeat' + str(i): image[0]})
                 scale = 8
                 scales.append(scale)
+            # if the short summary does not exist within the if statements above, the image is of a cute bird.
             else:
                 image = [all_images[36], all_images[37], all_images[38], all_images[39], all_images[40],
                          all_images[41]]
-                images.update({'image' + str(i): image})
+                if image not in list(images.values()):
+                    images.update({image[0]: image})
+                else:
+                    images.update({'repeat' + str(i): image[0]})
                 scale = 30
                 scales.append(scale)
+            # starting at 1 = 0, print the upcoming day of the week, high, low, and short summary in increments of y=90.
             if i > 0:
                 gui.text(1000, 150 + (i * 90), self.short_summary[i], 'dark orchid', 17)
                 gui.text(870, 125 + (i * 90), self.day_of_week[i].capitalize(), 'medium violet red', 20)
                 gui.text(870, 150 + (i * 90), 'High: ' + str(self.daily_high[i]) + '........', 'dark orchid', 17)
                 gui.text(870, 175 + (i * 90), 'Low: ' + str(self.daily_low[i]), 'dark orchid', 17)
             i += 1
-        previous_image = images['image1']
+        # this loop checks if there are any repeated images by setting previous_image to image1 and appending
+        # a specific file in images for that day of the week to printing
+        # if the current image is equal to the previous image.
+        for key, value in images.items():
+            if key[:6] != 'repeat':
+                im = value.pop(0)
+                printing.append(im)
+            else:
+                im = images[value].pop(0)
+                printing.append(im)
         j = 0
         while j < len(locations):
-            current_image = images['image' + str(j + 1)]
-            if current_image == previous_image:
-                printing.append(current_image[j])
-                previous_image = current_image
+            if printing[j + 1][1:4] in 'inkpx-word-art.png':
+                gui.image(747, locations[j], 1, scales[j], printing[j + 1])
             else:
-                printing.append(current_image[j])
-            gui.image(769, locations[j], 1, scales[j + 1], printing[j])
+                gui.image(769, locations[j], 1, scales[j], printing[j + 1])
             j += 1
+        # the next set of lines pulls from moon_data, and checks the moonphase value. Depending on the value,
+        # a different image is associated with moon, and a different scale as well.
+        # *I still need to check the scales for each moon*
+        # there are also cute little quotes for some of the phases of the moon displayed in text.
         moon = ''
         moon_scale = 1
         if moon_data["days"][0]["moonphase"] == 0:
@@ -287,10 +331,16 @@ class Weather:
             moon_scale = 3
         if moon_data["days"][0]["moonphase"] == 0.25:
             moon = 'first_quarter.png'
-            moon_scale = 2
+            moon_scale = 3
         if 0.25 < moon_data["days"][0]["moonphase"] < 0.5:
             moon = 'waxing_gibbous.png'
-            moon_scale = 1
+            moon_scale = 2
+            gui.text(310, 215, """The Waxing Gibbous Moon
+    phase is a time for reflection.
+    It's a time to look back on the life lessons 
+    you've learnt and the internal growth that
+    has come from them and use this to adjust
+    your current goals and life path accordingly.""", 'medium violet red', 13)
         if moon_data["days"][0]["moonphase"] == 0.5:
             moon = 'full_moon.png'
         if 0.5 < moon_data["days"][0]["moonphase"] < 0.75:
@@ -312,17 +362,23 @@ class Weather:
         if 0.75 < moon_data["days"][0]["moonphase"] == 1:
             moon = 'moon.png'
             moon_scale = 1
+        # Display the selected moon and moon scale.
         gui.image(164, 215, 1, moon_scale, moon)
+        # Display the short summary for the current day of the week.
         gui.text(294, 490, self.short_summary[0], 'dark orchid', 17)
+        # Make the image bigger for the current day of the week by subtracting 10 from the scale if possible.
+        keys = list(images.keys())
         if scales[0] > 11:
-            gui.image(530, 625, 1, scales[0] - 10, images['image0'][5])
+            gui.image(520, 625, 1, scales[0] - 10, images[keys[0]][0])
         else:
-            gui.image(550, 625, 1, scales[0], images['image0'][5])
+            gui.image(520, 625, 1, scales[0], images[keys[0]][0])
+        # Display the current day of the week, high and low temp, and fast and slow wind speed.
         gui.text(164, 425, self.day_of_week[0].capitalize(), 'medium violet red', 30)
         gui.text(164, 490, 'High: ' + str(self.daily_high[0]) + '........', 'dark orchid', 17)
         gui.text(164, 520, 'Low: ' + str(self.daily_low[0]), 'dark orchid', 17)
         gui.text(165, 575, 'High Wind Speed: ' + str(self.fast_wind[0]) + ' mph', 'dark orchid', 17)
         gui.text(165, 605, 'Low Wind Speed: ' + str(self.slow_wind[0]) + ' mph', 'dark orchid', 17)
+        # Pulling from the moon_data, we display text showing the time of the sunrise and sunset for the current day.
         if int(moon_data['days'][0]['sunrise'][0:2]) > 12:
             sunrise = str(int(moon_data['days'][0]['sunrise'][0:2]) - 12) + str(moon_data['days'][0]['sunrise'][2:])
             gui.text(165, 665, 'Sunrise: ' + sunrise + ' AM', 'dark orchid', 17)
@@ -336,6 +392,7 @@ class Weather:
         else:
             sunset = str(moon_data['days'][0]['sunset'])
             gui.text(165, 695, 'Sunset: ' + ' ' + sunset + ' PM', 'dark orchid', 17)
+        # This method displays all the graphics planned above.
         gui.draw()
 
 
@@ -367,17 +424,21 @@ def main():
         :param e: ending point
         :return [high, low]: a list of length 2 containing the high and low temperatures for that day of the week.
         """
+        # Set high and low temperatures to check.
         low = data["properties"]["periods"][s + 1]["temperature"]
         high = data["properties"]["periods"][s]["temperature"]
         i = s
+        # If we are starting at the first period, set the high temperature to the temperature for the first period.
         if s == 1:
             high = data["properties"]["periods"][1]["temperature"]
+        # Until the given period to end at, check if the current temperature is greater than high or less than low.
         while i <= e:
             if data["properties"]["periods"][i]["temperature"] <= low:
                 low = data["properties"]["periods"][i]["temperature"]
             elif data["properties"]["periods"][i]["temperature"] >= high:
                 high = data["properties"]["periods"][i]["temperature"]
             i += 1
+        # In a list return the high and low values.
         return [high, low]
 
     def wind_speed(s, e):
@@ -387,17 +448,21 @@ def main():
         :param e: ending point
         :return [fast, slow]: list of length 2 containing the fast and low wind speeds for that day of the week.
         """
+        # Set the slow and fast values to check.
         slow = int(data["properties"]["periods"][s + 1]["windSpeed"][0:2])
         fast = int(data["properties"]["periods"][s]["windSpeed"][0:2])
         i = s
+        # If we are starting at the first period, set the fast wind speed to the wind speed for the first period.
         if s == 1:
             fast = int(data["properties"]["periods"][1]["windSpeed"][0:2])
+        # Until the given period to end at, check if the current wind speed is greater than fast or less than slow.
         while i <= e:
             if int(data["properties"]["periods"][i]["windSpeed"][0:2]) <= slow:
                 slow = int(data["properties"]["periods"][i]["windSpeed"][0:2])
             elif int(data["properties"]["periods"][i]["windSpeed"][0:2]) >= fast:
                 fast = int(data["properties"]["periods"][i]["windSpeed"][0:2])
             i += 1
+        # Return fast and slow in a list.
         return [fast, slow]
 
     def summaries_list(s, e):
@@ -413,7 +478,7 @@ def main():
         while i <= e:
             list_of_summaries.append(data["properties"]["periods"][i]["shortForecast"])
             i += 1
-        # find the mode of the summaries
+        # Find the mode of the summaries.
         for a in list_of_summaries:
             if a not in mode:
                 mode[a] = 1
@@ -426,24 +491,26 @@ def main():
     previous_weekday = datetime.datetime(int(data["properties"]["periods"][1]["startTime"][:4]),
                                          int(data["properties"]["periods"][1]["startTime"][5:7]),
                                          int(data["properties"]["periods"][1]["startTime"][8:10])).strftime('%A')
-    # create list with finalized days to visualize
+    # Create list with finalized days to visualize.
     days_of_week = []
     indices = [1]
-    # for each item in the list of periods
+    # For each item in the list of periods
     for p in all_periods:
-        # grab that item
+        # Grab that item.
         current_weekday = datetime.datetime(int(p["startTime"][:4]), int(p["startTime"][5:7]),
                                             int(p["startTime"][8:10])).strftime('%A')
-        # is it a different day?
+        # Is it a different day?
         if current_weekday != previous_weekday:
             days_of_week.append(previous_weekday)
             previous_weekday = current_weekday
             indices.append(p['number'])
+    # If the list of the days of the week is too short, add the day in the last period.
     if len(days_of_week) == 6:
         days_of_week.append(datetime.datetime(int(data["properties"]["periods"][-1]["startTime"][:4]),
                                               int(data["properties"]["periods"][-1]["startTime"][5:7]),
                                               int(data["properties"]["periods"][-1]["startTime"][8:10])).strftime(
             '%A'))
+    # Compile lists of values for each day of the week.
     daily_high = [high_low(indices[0], indices[1])[0], high_low(indices[1], indices[2])[0],
                   high_low(indices[2], indices[3])[0], high_low(indices[3], indices[4])[0],
                   high_low(indices[4], indices[5])[0], high_low(indices[5], indices[6])[0],
@@ -464,10 +531,11 @@ def main():
                        summaries_list(indices[2], indices[3])[0], summaries_list(indices[3], indices[4])[0],
                        summaries_list(indices[4], indices[5])[0], summaries_list(indices[5], indices[6])[0],
                        summaries_list(indices[6], 155)[0]]
-
+    # Call the class Weather, with the created lists for each object
     go = Weather(days_of_week, daily_high, daily_lows, short_summaries, fast_winds, slow_winds)
+    # Call the text based visualization function and the graphics function.
     go.draw_forecast()
     go.graph()
 
 
-help(Weather)
+main()
