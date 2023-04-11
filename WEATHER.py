@@ -226,9 +226,9 @@ class Weather:
         gui.rectangle(w - (w * (156 / 1440)) - 515, 215, 515, 545, 'lavender blush')
         gui.rectangle(w * (156 / 1440), 215, 515, 545, 'lavender blush')
         # create the logo for pink sky
-        gui.image(565, 0, 1, 2, "pngegg.png")
-        gui.image(695, 50, 1, 30, "moon.png")
-        gui.image(615, 100, 1, 5, "l.png")
+        gui.image((w / 2) - 155, 0, 1, 2, "pngegg.png")
+        gui.image((w / 2) - 25, 50, 1, 30, "moon.png")
+        gui.image((w / 2) - 105, 100, 1, 5, "l.png")
         # loops through the list of short summaries for the next 6 days, and appends the images and scales lists.
         i = 0
         while i < len(self.short_summary):
@@ -354,33 +354,33 @@ class Weather:
             moon = 'moon.png'
             moon_scale = 4
         # Display the selected moon and moon scale.
-        gui.image(164, 215, 1, moon_scale, moon)
+        gui.image((w / 2) - 565, 215, 1, moon_scale, moon)
         # Make the image bigger for the current day of the week by subtracting 10 from the scale if possible.
         keys = list(images.keys())
         if scales[0] > 11:
-            gui.image(520, 625, 1, scales[0] - 10, images[keys[0]][0])
+            gui.image((w / 2) - 200, 625, 1, scales[0] - 10, images[keys[0]][0])
         else:
-            gui.image(520, 625, 1, scales[0], images[keys[0]][0])
+            gui.image((w / 2) - 200, 625, 1, scales[0], images[keys[0]][0])
         # Display the current day of the week, high and low temp, and fast and slow wind speed.
-        gui.text(164, 425, self.day_of_week[0].capitalize(), 'medium violet red', 30)
-        gui.text(164, 490, 'High: ' + str(self.daily_high[0]) + '........' + self.short_summary[0], 'dark orchid', 17)
-        gui.text(164, 520, 'Low: ' + str(self.daily_low[0]), 'dark orchid', 17)
-        gui.text(165, 575, 'High Wind Speed: ' + str(self.fast_wind[0]) + ' mph', 'dark orchid', 17)
-        gui.text(165, 605, 'Low Wind Speed: ' + str(self.slow_wind[0]) + ' mph', 'dark orchid', 17)
+        gui.text((w / 2) - 565, 425, self.day_of_week[0].capitalize(), 'medium violet red', 30)
+        gui.text((w / 2) - 565, 490, 'High: ' + str(self.daily_high[0]) + '........' + self.short_summary[0], 'dark orchid', 17)
+        gui.text((w / 2) - 565, 520, 'Low: ' + str(self.daily_low[0]), 'dark orchid', 17)
+        gui.text((w / 2) - 564, 575, 'High Wind Speed: ' + str(self.fast_wind[0]) + ' mph', 'dark orchid', 17)
+        gui.text((w / 2) - 564, 605, 'Low Wind Speed: ' + str(self.slow_wind[0]) + ' mph', 'dark orchid', 17)
         # Pulling from the moon_data, we display text showing the time of the sunrise and sunset for the current day.
         if int(moon_data['days'][0]['sunrise'][0:2]) > 12:
             sunrise = str(int(moon_data['days'][0]['sunrise'][0:2]) - 12) + str(moon_data['days'][0]['sunrise'][2:])
-            gui.text(165, 665, 'Sunrise: ' + sunrise + ' AM', 'dark orchid', 17)
+            gui.text((w / 2) - 564, 665, 'Sunrise: ' + sunrise + ' AM', 'dark orchid', 17)
         else:
             sunrise = str(moon_data['days'][0]['sunrise'])
-            gui.text(165, 665, 'Sunrise: ' + sunrise + ' AM', 'dark orchid', 17)
+            gui.text((w / 2) - 564, 665, 'Sunrise: ' + sunrise + ' AM', 'dark orchid', 17)
         if int(moon_data['days'][0]['sunset'][0:2]) > 12:
             sunset = str(0) + str(int(moon_data['days'][0]['sunset'][0:2]) - 12) + str(
                 moon_data['days'][0]['sunset'][2:])
-            gui.text(165, 695, 'Sunset: ' + ' ' + sunset + ' PM', 'dark orchid', 17)
+            gui.text((w / 2) - 564, 695, 'Sunset: ' + ' ' + sunset + ' PM', 'dark orchid', 17)
         else:
             sunset = str(moon_data['days'][0]['sunset'])
-            gui.text(165, 695, 'Sunset: ' + ' ' + sunset + ' PM', 'dark orchid', 17)
+            gui.text((w / 2) - 564, 695, 'Sunset: ' + ' ' + sunset + ' PM', 'dark orchid', 17)
         # This method displays all the graphics planned above.
         gui.draw()
 
