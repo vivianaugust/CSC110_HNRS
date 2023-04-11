@@ -212,18 +212,19 @@ class Weather:
         # Locations is a list of the y-coordinates for the weather for each day of the week.
         locations = [215, 305, 395, 485, 575, 665]
         # create the canvas to add graphics to
-        gui = graphics(1440, 790, 'Weather')
+        gui = graphics('Weather')
         w = gui.primary.winfo_screenwidth()
         h = gui.primary.winfo_screenheight()
-        gui.resize(w, h - 170)
+        print(w, h)
         # choosing the background image based on if isDaytime in first period of data is true or false.
         if data["properties"]["periods"][1]["isDaytime"]:
             gui.image(0, 0, 1, 3, "sky.png")
         else:
             gui.image(0, 0, 1, 3, "night.png")
         # two rectangles to organize the information for the current weekday and the upcoming weekdays.
-        gui.rectangle(w - 671, 215, 515, 545, 'lavender blush')
-        gui.rectangle(156, 215, 515, 545, 'lavender blush')
+        print(w - (w * (156 / 1440)) - 515)
+        gui.rectangle(w - (w * (156 / 1440)) - 515, 215, 515, 545, 'lavender blush')
+        gui.rectangle(w * (156 / 1440), 215, 515, 545, 'lavender blush')
         # create the logo for pink sky
         gui.image(565, 0, 1, 2, "pngegg.png")
         gui.image(695, 50, 1, 30, "moon.png")
@@ -298,10 +299,10 @@ class Weather:
                 scales.append(scale)
             # starting at 1 = 0, print the upcoming day of the week, high, low, and short summary in increments of y=90.
             if i > 0:
-                gui.text(870, 125 + (i * 90), self.day_of_week[i].capitalize(), 'medium violet red', 20)
-                gui.text(870, 150 + (i * 90), 'High: ' + str(self.daily_high[i]) + '........' +
+                gui.text(w - (w * (156 / 1440)) - 414, 125 + (i * 90), self.day_of_week[i].capitalize(), 'medium violet red', 20)
+                gui.text(w - (w * (156 / 1440)) - 414, 150 + (i * 90), 'High: ' + str(self.daily_high[i]) + '........' +
                          self.short_summary[i], 'dark orchid', 17)
-                gui.text(870, 175 + (i * 90), 'Low: ' + str(self.daily_low[i]), 'dark orchid', 17)
+                gui.text(w - (w * (156 / 1440)) - 414, 175 + (i * 90), 'Low: ' + str(self.daily_low[i]), 'dark orchid', 17)
             i += 1
         # this loop checks if there are any repeated images by setting previous_image to image1 and appending
         # a specific file in images for that day of the week to printing
@@ -316,9 +317,9 @@ class Weather:
         j = 0
         while j < len(locations):
             if printing[j + 1][1:4] in 'inkpx-word-art.png':
-                gui.image(w - 671 - 22, locations[j], 1, scales[j], printing[j + 1])
+                gui.image(w - (w * (156 / 1440)) - 515 - 22, locations[j], 1, scales[j], printing[j + 1])
             else:
-                gui.image(w - 671, locations[j], 1, scales[j], printing[j + 1])
+                gui.image(w - (w * (156 / 1440)) - 515, locations[j], 1, scales[j], printing[j + 1])
             j += 1
         # the next set of lines pulls from moon_data, and checks the moonphase value. Depending on the value,
         # a different image is associated with moon, and a different scale as well.
