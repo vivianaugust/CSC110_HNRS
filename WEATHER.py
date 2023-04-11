@@ -338,12 +338,6 @@ class Weather:
         if 0.25 < moon_data["days"][0]["moonphase"] < 0.5:
             moon = 'waxing_gibbous.png'
             moon_scale = 2
-            gui.text(310, 215, """The Waxing Gibbous Moon
-    phase is a time for reflection.
-    It's a time to look back on the life lessons 
-    you've learnt and the internal growth that
-    has come from them and use this to adjust
-    your current goals and life path accordingly.""", 'medium violet red', 13)
         if moon_data["days"][0]["moonphase"] == 0.5:
             moon = 'full_moon.png'
         if 0.5 < moon_data["days"][0]["moonphase"] < 0.75:
@@ -355,13 +349,6 @@ class Weather:
         if 0.75 < moon_data["days"][0]["moonphase"] < 1:
             moon = 'waning_crescent.png'
             moon_scale = 4
-            gui.text(310, 215, """A Waning Crescent Moon is
-    the perfect time to rest and regenerate.
-    It's a period of self-care; 
-    to find inner peace and reconnect with yourself,
-    surrendering all that has happened
-    that is out of our control, 
-    before the lunar cycle begins again.""", 'medium violet red', 13)
         if 0.75 < moon_data["days"][0]["moonphase"] == 1:
             moon = 'moon.png'
             moon_scale = 4
