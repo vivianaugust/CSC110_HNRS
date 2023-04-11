@@ -212,15 +212,18 @@ class Weather:
         # Locations is a list of the y-coordinates for the weather for each day of the week.
         locations = [215, 305, 395, 485, 575, 665]
         # create the canvas to add graphics to
-        gui = graphics(1480, 790, 'Weather')
+        gui = graphics(1440, 790, 'Weather')
+        w = gui.primary.winfo_screenwidth()
+        h = gui.primary.winfo_screenheight()
+        gui.resize(w, h - 170)
         # choosing the background image based on if isDaytime in first period of data is true or false.
         if data["properties"]["periods"][1]["isDaytime"]:
             gui.image(0, 0, 1, 3, "sky.png")
         else:
             gui.image(0, 0, 1, 3, "night.png")
         # two rectangles to organize the information for the current weekday and the upcoming weekdays.
-        gui.rectangle(769, 215, 515, 545, 'lavender blush')
-        gui.rectangle(164, 215, 515, 545, 'lavender blush')
+        gui.rectangle(w - 671, 215, 515, 545, 'lavender blush')
+        gui.rectangle(156, 215, 515, 545, 'lavender blush')
         # create the logo for pink sky
         gui.image(565, 0, 1, 2, "pngegg.png")
         gui.image(695, 50, 1, 30, "moon.png")
@@ -295,9 +298,9 @@ class Weather:
                 scales.append(scale)
             # starting at 1 = 0, print the upcoming day of the week, high, low, and short summary in increments of y=90.
             if i > 0:
-                gui.text(1000, 150 + (i * 90), self.short_summary[i], 'dark orchid', 17)
                 gui.text(870, 125 + (i * 90), self.day_of_week[i].capitalize(), 'medium violet red', 20)
-                gui.text(870, 150 + (i * 90), 'High: ' + str(self.daily_high[i]) + '........', 'dark orchid', 17)
+                gui.text(870, 150 + (i * 90), 'High: ' + str(self.daily_high[i]) + '........' +
+                         self.short_summary[i], 'dark orchid', 17)
                 gui.text(870, 175 + (i * 90), 'Low: ' + str(self.daily_low[i]), 'dark orchid', 17)
             i += 1
         # this loop checks if there are any repeated images by setting previous_image to image1 and appending
@@ -313,9 +316,9 @@ class Weather:
         j = 0
         while j < len(locations):
             if printing[j + 1][1:4] in 'inkpx-word-art.png':
-                gui.image(747, locations[j], 1, scales[j], printing[j + 1])
+                gui.image(w - 671 - 22, locations[j], 1, scales[j], printing[j + 1])
             else:
-                gui.image(769, locations[j], 1, scales[j], printing[j + 1])
+                gui.image(w - 671, locations[j], 1, scales[j], printing[j + 1])
             j += 1
         # the next set of lines pulls from moon_data, and checks the moonphase value. Depending on the value,
         # a different image is associated with moon, and a different scale as well.
@@ -345,7 +348,7 @@ class Weather:
             moon = 'full_moon.png'
         if 0.5 < moon_data["days"][0]["moonphase"] < 0.75:
             moon = 'waning_gibbous.png'
-            moon_scale = 1
+            moon_scale = 3
         if moon_data["days"][0]["moonphase"] == 0.75:
             moon = 'last_quarter.png'
             moon_scale = 1
@@ -361,11 +364,9 @@ class Weather:
     before the lunar cycle begins again.""", 'medium violet red', 13)
         if 0.75 < moon_data["days"][0]["moonphase"] == 1:
             moon = 'moon.png'
-            moon_scale = 1
+            moon_scale = 4
         # Display the selected moon and moon scale.
         gui.image(164, 215, 1, moon_scale, moon)
-        # Display the short summary for the current day of the week.
-        gui.text(294, 490, self.short_summary[0], 'dark orchid', 17)
         # Make the image bigger for the current day of the week by subtracting 10 from the scale if possible.
         keys = list(images.keys())
         if scales[0] > 11:
@@ -374,7 +375,7 @@ class Weather:
             gui.image(520, 625, 1, scales[0], images[keys[0]][0])
         # Display the current day of the week, high and low temp, and fast and slow wind speed.
         gui.text(164, 425, self.day_of_week[0].capitalize(), 'medium violet red', 30)
-        gui.text(164, 490, 'High: ' + str(self.daily_high[0]) + '........', 'dark orchid', 17)
+        gui.text(164, 490, 'High: ' + str(self.daily_high[0]) + '........' + self.short_summary[0], 'dark orchid', 17)
         gui.text(164, 520, 'Low: ' + str(self.daily_low[0]), 'dark orchid', 17)
         gui.text(165, 575, 'High Wind Speed: ' + str(self.fast_wind[0]) + ' mph', 'dark orchid', 17)
         gui.text(165, 605, 'Low Wind Speed: ' + str(self.slow_wind[0]) + ' mph', 'dark orchid', 17)
