@@ -209,22 +209,24 @@ class Weather:
         images = {}
         # printing is a list containing the chosen file for each image in images.
         printing = []
-        # Locations is a list of the y-coordinates for the weather for each day of the week.
-        locations = [215, 305, 395, 485, 575, 665]
         # create the canvas to add graphics to
         gui = graphics('Weather')
         w = gui.primary.winfo_screenwidth()
         h = gui.primary.winfo_screenheight()
+        # Locations is a list of the y-coordinates for the weather for each day of the week.
+        locations = [(h / 2) - 265, (h / 2) - 265 + 90, (h / 2) - 265 + 2 * 90, (h / 2) - 265 + 3 * 90, (h / 2) - 265
+                     + 4 * 90, (h / 2) - 265 + 5 * 90]
         print(w, h)
+        difference = int((w * (3 / 1440)) - 3)
         # choosing the background image based on if isDaytime in first period of data is true or false.
         if data["properties"]["periods"][1]["isDaytime"]:
-            gui.image(0, 0, 1, 3, "sky.png")
+            gui.image(0, 0, 1, 3 - difference, "sky.png")
         else:
-            gui.image(0, 0, 1, 3, "night.png")
+            gui.image(0, 0, 1, 3 - difference, "night.png")
         # two rectangles to organize the information for the current weekday and the upcoming weekdays.
         print(w - (w * (156 / 1440)) - 515)
-        gui.rectangle((w / 2) + 49, 215, 515, 545, 'lavender blush')
-        gui.rectangle((w / 2) - 564, 215, 515, 545, 'lavender blush')
+        gui.rectangle((w / 2) + 49, (h / 2) - 265, 515, 545, 'lavender blush')
+        gui.rectangle((w / 2) - 564, (h / 2) - 265, 515, 545, 'lavender blush')
         # create the logo for pink sky
         gui.image((w / 2) - 155, 0, 1, 2, "pngegg.png")
         gui.image((w / 2) - 25, 50, 1, 30, "moon.png")
@@ -299,10 +301,15 @@ class Weather:
                 scales.append(scale)
             # starting at 1 = 0, print the upcoming day of the week, high, low, and short summary in increments of y=90.
             if i > 0:
-                gui.text((w / 2) + 49 + 101, 125 + (i * 90), self.day_of_week[i].capitalize(), 'medium violet red', 20)
-                gui.text((w / 2) + 49 + 101, 150 + (i * 90), 'High: ' + str(self.daily_high[i]) + '........' +
-                         self.short_summary[i], 'dark orchid', 17)
-                gui.text((w / 2) + 49 + 101, 175 + (i * 90), 'Low: ' + str(self.daily_low[i]), 'dark orchid', 17)
+                j = 0
+                while j < len(locations):
+                    gui.text((w / 2) + 49 + 101, locations[j], self.day_of_week[j + 1].capitalize(), 'medium violet red'
+                             , 20)
+                    gui.text((w / 2) + 49 + 101, locations[j] + 30, 'High: ' + str(self.daily_high[j + 1]) + '........'
+                             + self.short_summary[j + 1], 'dark orchid', 17)
+                    gui.text((w / 2) + 49 + 101, locations[j] + 60, 'Low: ' + str(self.daily_low[j + 1]), 'dark orchid',
+                             17)
+                    j += 1
             i += 1
         # this loop checks if there are any repeated images by setting previous_image to image1 and appending
         # a specific file in images for that day of the week to printing
@@ -354,33 +361,34 @@ class Weather:
             moon = 'moon.png'
             moon_scale = 4
         # Display the selected moon and moon scale.
-        gui.image((w / 2) - 565, 215, 1, moon_scale, moon)
+        gui.image((w / 2) - 565, (h / 2) - 265, 1, moon_scale, moon)
         # Make the image bigger for the current day of the week by subtracting 10 from the scale if possible.
         keys = list(images.keys())
         if scales[0] > 11:
-            gui.image((w / 2) - 200, 625, 1, scales[0] - 10, images[keys[0]][0])
+            gui.image((w / 2) - 200, (h / 2) + 145, 1, scales[0] - 10, images[keys[0]][0])
         else:
-            gui.image((w / 2) - 200, 625, 1, scales[0], images[keys[0]][0])
+            gui.image((w / 2) - 200, (h / 2) + 145, 1, scales[0], images[keys[0]][0])
         # Display the current day of the week, high and low temp, and fast and slow wind speed.
-        gui.text((w / 2) - 565, 425, self.day_of_week[0].capitalize(), 'medium violet red', 30)
-        gui.text((w / 2) - 565, 490, 'High: ' + str(self.daily_high[0]) + '........' + self.short_summary[0], 'dark orchid', 17)
-        gui.text((w / 2) - 565, 520, 'Low: ' + str(self.daily_low[0]), 'dark orchid', 17)
-        gui.text((w / 2) - 564, 575, 'High Wind Speed: ' + str(self.fast_wind[0]) + ' mph', 'dark orchid', 17)
-        gui.text((w / 2) - 564, 605, 'Low Wind Speed: ' + str(self.slow_wind[0]) + ' mph', 'dark orchid', 17)
+        gui.text((w / 2) - 565, (h / 2) - 55, self.day_of_week[0].capitalize(), 'medium violet red', 30)
+        gui.text((w / 2) - 565, (h / 2) + 5, 'High: ' + str(self.daily_high[0]) + '........' + self.short_summary[0],
+                 'dark orchid', 17)
+        gui.text((w / 2) - 565, (h / 2) + 40, 'Low: ' + str(self.daily_low[0]), 'dark orchid', 17)
+        gui.text((w / 2) - 564, (h / 2) + 95, 'High Wind Speed: ' + str(self.fast_wind[0]) + ' mph', 'dark orchid', 17)
+        gui.text((w / 2) - 564, (h / 2) + 125, 'Low Wind Speed: ' + str(self.slow_wind[0]) + ' mph', 'dark orchid', 17)
         # Pulling from the moon_data, we display text showing the time of the sunrise and sunset for the current day.
         if int(moon_data['days'][0]['sunrise'][0:2]) > 12:
             sunrise = str(int(moon_data['days'][0]['sunrise'][0:2]) - 12) + str(moon_data['days'][0]['sunrise'][2:])
-            gui.text((w / 2) - 564, 665, 'Sunrise: ' + sunrise + ' AM', 'dark orchid', 17)
+            gui.text((w / 2) - 564, (h / 2) + 185, 'Sunrise: ' + sunrise + ' AM', 'dark orchid', 17)
         else:
             sunrise = str(moon_data['days'][0]['sunrise'])
-            gui.text((w / 2) - 564, 665, 'Sunrise: ' + sunrise + ' AM', 'dark orchid', 17)
+            gui.text((w / 2) - 564, (h / 2) + 185, 'Sunrise: ' + sunrise + ' AM', 'dark orchid', 17)
         if int(moon_data['days'][0]['sunset'][0:2]) > 12:
             sunset = str(0) + str(int(moon_data['days'][0]['sunset'][0:2]) - 12) + str(
                 moon_data['days'][0]['sunset'][2:])
-            gui.text((w / 2) - 564, 695, 'Sunset: ' + ' ' + sunset + ' PM', 'dark orchid', 17)
+            gui.text((w / 2) - 564, (h / 2) + 215, 'Sunset: ' + ' ' + sunset + ' PM', 'dark orchid', 17)
         else:
             sunset = str(moon_data['days'][0]['sunset'])
-            gui.text((w / 2) - 564, 695, 'Sunset: ' + ' ' + sunset + ' PM', 'dark orchid', 17)
+            gui.text((w / 2) - 564, (h / 2) + 215, 'Sunset: ' + ' ' + sunset + ' PM', 'dark orchid', 17)
         # This method displays all the graphics planned above.
         gui.draw()
 
