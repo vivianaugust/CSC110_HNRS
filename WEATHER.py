@@ -299,10 +299,10 @@ class Weather:
                 scales.append(scale)
             # starting at 1 = 0, print the upcoming day of the week, high, low, and short summary in increments of y=90.
             if i > 0:
-                gui.text(w - (w * (156 / 1440)) - 414, 125 + (i * 90), self.day_of_week[i].capitalize(), 'medium violet red', 20)
-                gui.text(w - (w * (156 / 1440)) - 414, 150 + (i * 90), 'High: ' + str(self.daily_high[i]) + '........' +
+                gui.text((w / 2) + 49 + 101, 125 + (i * 90), self.day_of_week[i].capitalize(), 'medium violet red', 20)
+                gui.text((w / 2) + 49 + 101, 150 + (i * 90), 'High: ' + str(self.daily_high[i]) + '........' +
                          self.short_summary[i], 'dark orchid', 17)
-                gui.text(w - (w * (156 / 1440)) - 414, 175 + (i * 90), 'Low: ' + str(self.daily_low[i]), 'dark orchid', 17)
+                gui.text((w / 2) + 49 + 101, 175 + (i * 90), 'Low: ' + str(self.daily_low[i]), 'dark orchid', 17)
             i += 1
         # this loop checks if there are any repeated images by setting previous_image to image1 and appending
         # a specific file in images for that day of the week to printing
@@ -317,9 +317,9 @@ class Weather:
         j = 0
         while j < len(locations):
             if printing[j + 1][1:4] in 'inkpx-word-art.png':
-                gui.image(w - (w * (156 / 1440)) - 515 - 22, locations[j], 1, scales[j], printing[j + 1])
+                gui.image((w / 2) + 49 - 22, locations[j], 1, scales[j], printing[j + 1])
             else:
-                gui.image(w - (w * (156 / 1440)) - 515, locations[j], 1, scales[j], printing[j + 1])
+                gui.image((w / 2) + 49, locations[j], 1, scales[j], printing[j + 1])
             j += 1
         # the next set of lines pulls from moon_data, and checks the moonphase value. Depending on the value,
         # a different image is associated with moon, and a different scale as well.
