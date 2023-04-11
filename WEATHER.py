@@ -223,8 +223,8 @@ class Weather:
             gui.image(0, 0, 1, 3, "night.png")
         # two rectangles to organize the information for the current weekday and the upcoming weekdays.
         print(w - (w * (156 / 1440)) - 515)
-        gui.rectangle(w - (w * (156 / 1440)) - 515, 215, 515, 545, 'lavender blush')
-        gui.rectangle(w * (156 / 1440), 215, 515, 545, 'lavender blush')
+        gui.rectangle((w / 2) + 49, 215, 515, 545, 'lavender blush')
+        gui.rectangle((w / 2) - 564, 215, 515, 545, 'lavender blush')
         # create the logo for pink sky
         gui.image((w / 2) - 155, 0, 1, 2, "pngegg.png")
         gui.image((w / 2) - 25, 50, 1, 30, "moon.png")
