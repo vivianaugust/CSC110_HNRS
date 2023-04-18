@@ -25,6 +25,7 @@ class Weather:
     5) fast_wind: a list of the fast wind speeds for each day of the week, len(fast_wind) = 7
     6) slow_wind: a list of the slow wind speeds for each day of the week, len(slow_wind) = 7
     """
+
     def __init__(self, day_of_week, daily_high, daily_low, short_summary, fast_wind, slow_wind):
         self.day_of_week = day_of_week
         self.daily_high = daily_high
@@ -64,7 +65,7 @@ class Weather:
                 Be Careful!""")
             elif self.short_summary[i] == "Sunny":
                 print(r"""
-    
+
                             .   |
                                 |
                   \    *        |     *    .  /
@@ -109,9 +110,9 @@ class Weather:
         )  )  ( )       --'       `- __.'         :(      ))
         .-'  (_.'          .')                    `(    )  ))
                           (_  )                     ` __.:'
-    
+
         --..,___.--,--'`,---..-.--+--.,,-,,..._.--..-._.-a:f--.
-    
+
                 Shade and sun, what could be better!""")
             elif self.short_summary[i] == "Snow Showers Likely":
                 print(r"""
@@ -180,7 +181,7 @@ class Weather:
         )  )  ( )       --'       `- __.'         :(      )) 
         .-'  (_.'          .')                    `(    )  ))
                           (_  )                     ` __.:'          
-    
+
         --..,___.--,--'`,---..-.--+--.,,-,,..._.--..-._.-.:.--.
         'I've got sunshine, on a cloudy day,' The Temptations.""")
             else:
@@ -321,12 +322,14 @@ class Weather:
             else:
                 im = images[value].pop(0)
                 printing.append(im)
-        j = 0
-        while j < len(locations):
-            if printing[j + 1][1:4] in 'inkpx-word-art.png':
-                gui.image((w / 2) + 49 - 22, locations[j], 1, scales[j], printing[j + 1])
+        j = 1
+        while j < len(locations) + 1:
+            if printing[j][1:4] in 'inkpx-word-art.png':
+                gui.image((w / 2) + 49 - 22, locations[j - 1], 1, scales[j], printing[j])
+                print(locations[j - 1], scales[j], printing[j])
             else:
-                gui.image((w / 2) + 49, locations[j], 1, scales[j], printing[j + 1])
+                gui.image((w / 2) + 49, locations[j - 1], 1, scales[j], printing[j])
+                print(locations[j - 1], scales[j], printing[j])
             j += 1
         # the next set of lines pulls from moon_data, and checks the moonphase value. Depending on the value,
         # a different image is associated with moon, and a different scale as well.
@@ -390,6 +393,8 @@ class Weather:
             sunset = str(moon_data['days'][0]['sunset'])
             gui.text((w / 2) - 564, (h / 2) + 215, 'Sunset: ' + ' ' + sunset + ' PM', 'dark orchid', 17)
         # This method displays all the graphics planned above.
+        print(scales)
+        print(printing)
         gui.draw()
 
 
@@ -414,6 +419,7 @@ def main():
 
     :return N/A: calls the weather class and its functions with new values for each object created as lists by main().
     """
+
     def high_low(s, e):
         """
         Loops through the 24 hours in a day, 12 periods and returns the high and low temperatures in a list.
