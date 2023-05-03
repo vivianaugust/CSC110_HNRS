@@ -2,44 +2,72 @@ from urllib.request import urlopen
 import datetime
 import json
 from graphics_file import graphics
+import re
 
-url = "https://api.weather.gov/gridpoints/TWC/91,49/forecast/hourly"
 url2 = """https://tinyurl.com/pytinymoon"""
-response = urlopen(url)
 response2 = urlopen(url2)
-data = json.loads(response.read())
 moon_data = json.loads(response2.read())
 
 
-"""def change_url():
-    places = {'Wakefield': ["AKQ"], 'Albany': ['ALY'], 'Binghamton': ["BGM"], 'Taunton': ["BOX"], 'Burlington': ["BTV"],
-              "BUF": [],
-              "CAE": [], "CAR": [], "CHS": [], "CLE": [], "CTP": [], "GSP": [],
-              "GYX": [], "ILM": [], "ILN": [], "LWX": [], "MHX": [], "OKX": [],
-              "PBZ": [], "PHI": [], "RAH": [], "RLX": [], "RNK": [], "ABQ": [],
-              "AMA": [], "BMX": [], "BRO": [], "CRP": [], "EPZ": [], "EWX": [],
-              "KEY": [], "LCH": [], "LIX": [], "LUB": [], "LZK": [], "MAF": [],
-              "MEG": [], "MFL": [], "MLB": [], "MOB": [], "MRX": [], "OHX": [],
-              "OUN": [], "SHV": [], "SJT": [], "SJU": [], "TAE": [], "TBW": [],
-              "TSA": [], "ABR": [], "APX": [], "ARX": [], "BIS": [], "BOU": [],
-              "CYS": [], "DDC": [], "DLH": [], "DMX": [], "DTX": [], "DVN": [],
-              "EAX": [], "FGF": [], "FSD": [], "GID": [], "GJT": [], "GLD": [],
-              "GRB": [], "GRR": [], "ICT": [], "ILX": [], "IND": [], "IWX": [],
-              "JKL": [], "LBF": [], "LMK": [], "LOT": [], "LSX": [], "MKX": [],
-              "MPX": [], "MQT": [], "OAX": [], "PAH": [], "PUB": [], "RIW": [],
-              "SGF": [], "TOP": [], "UNR": [], "BOI": [], "BYZ": [], "EKA": [],
-              "FGZ": [], "GGW": [], "HNX": [], "LKN": [], "LOX": [], "MFR": [],
-              "MSO": [], "MTR": [], "OTX": [], "PDT": [], "PIH": [], "PQR": [],
-              "PSR": [], "REV": [], "SEW": [], "SGX": [], "SLC": [], "STO": [],
-              "TFX": [], "TWC": [], "VEF": [], "AER": [], "AFC": [], "AFG": [],
-              "AJK": [], "ALU": [], "GUM": [], "HPA": [], "HFO": [], "PPG": [],
-              "STU": [], "NH1": [], "NH2": [], "ONA": [], "ONP": []}
-    s = open('lit.txt', 'w')
-    f = open('nws_locations.txt', 'r')
+def change_url():
+    global data
+    city = input('Type your nearest National Weather Service City: ').capitalize()
+    state = input('Which state is it in? (if it\'s outside of the united states, type the country): ').capitalize()
+    code = 'TWC'
+    x = 32
+    y = -110
+    f = open('codes - Sheet1.csv', 'r')
+    places = []
     for line in f:
-        ln = line.strip('\n').split('|')
-        places[ln[2]] = [ln[-2], ln[-1]]
-    print(places)"""
+        place_1 = line.strip('\n').split(' ')
+        for v in place_1:
+            place = re.split(',', v)
+        for value in place:
+            places.append(value)
+    if city not in places or state not in places:
+        city = input('\nYour city or state is not a valid national weather service city. Please try again.\n'
+                     'For a list of accepted cities, visit '
+                     'https://en.wikipedia.org/wiki/List_of_National_Weather_Service_Weather_Forecast_Offices.\n\n'
+                     'New City: ').capitalize()
+        state = input('New State: ').capitalize()
+    for line in f:
+        ln = line.strip('\n').split(',')
+        if city in ln and state in ln:
+            code = ln[-1]
+    f.close()
+    f_2 = open('4letter - Sheet1.csv', 'r')
+    f_3 = open('nws - Sheet1.csv', 'r')
+    for line in f_2:
+        lr = line.strip('\n').split(',')
+        if code in lr:
+            code = lr[-1]
+        if lr[-1] not in f_3:
+            f_4 = open('second - Sheet1.csv', 'r')
+            for lin in f_4:
+                li = lin.strip('\n').split(',')
+                for v in li:
+                    if city in v:
+                        x = li[-2]
+                        y = li[-1]
+        else:
+            for lines in f_3:
+                tl = lines.strip('\n').split(',')
+                if code in tl:
+                    x = tl[-2]
+                    y = tl[-1]
+    url = "https://api.weather.gov/points/" + str(x) + ',' + str(y)
+    response = urlopen(url)
+    source = json.loads(response.read())
+    new_url = source["properties"]["forecastHourly"]
+    try:
+        next = urlopen(new_url)
+    except:
+        print('The forecast for', city, 'is currently unavailable. Please try again later. If this error continues,'
+                                        ' please contact support at sdb.support@noaa.gov.')
+        quit()
+    else:
+        data = json.loads(next.read())
+        return data
 
 
 class Weather:
@@ -56,6 +84,7 @@ class Weather:
     5) fast_wind: a list of the fast wind speeds for each day of the week, len(fast_wind) = 7
     6) slow_wind: a list of the slow wind speeds for each day of the week, len(slow_wind) = 7
     """
+
     def __init__(self, day_of_week, daily_high, daily_low, short_summary, fast_wind, slow_wind):
         self.day_of_week = day_of_week
         self.daily_high = daily_high
@@ -63,163 +92,6 @@ class Weather:
         self.short_summary = short_summary
         self.fast_wind = fast_wind
         self.slow_wind = slow_wind
-
-    def draw_forecast(self):
-        """
-        Takes the daily high and low temps, and a short summary and outputs a text based visual
-        :return N/A: this is a print function, will print text and ascii art for each day of the week.
-        """
-        i = 0
-        print('Your forecast for the next 6 days :)\n_____________________________________\n')
-        # Looping through the days of the week, day of the week, print the high, low, and image/short summary.
-        while i < len(self.day_of_week):
-            print(self.day_of_week[i])
-            print('High:', self.daily_high[i])
-            print('Low:', self.daily_low[i])
-            if self.short_summary[i] == "Showers And Thunderstorms":
-                print(self.short_summary[i])
-                print(r"""
-             _, .--.
-            (  / (  '-.
-           .-=-.    ) -.
-           /   (  .' .   \.
-           \ ( ' ,_) ) \_/
-            (_ , /\  ,_/
-              '--\ `\--`
-                 _\ _\.
-                 `\ \.
-                  _\_\.
-                  `\.\.
-                    \.
-                -.'.`\.'.-
-                Be Careful!""")
-            elif self.short_summary[i] == "Sunny":
-                print(r"""
-
-                            .   |
-                                |
-                  \    *        |     *    .  /
-                    \        *  |  .        /
-                 .    \     ___---___     /    .  
-                        \.--         --./     
-             ~-_    *  ./               \.   *   _-~
-                ~-_   /    ^         ^    \   _-~     *
-           *       ~-/    ___       ___    \-~        
-             .      |    (_O_)     (_O_)    |      .
-                 * |                         | *     
-        -----------|                         |-----------
-          .        |    <               >    |        .    
-                *   |    \             /    | *
-                   _-\    `.         .'    /-_    *
-             .  _-~ . \     `-.___.-'     /   ~-_     
-             _-~       `\               /'*      ~-_  
-            ~           /`--___   ___--'\           ~
-                   *  /        ---     .  \        .
-                    /     *     |           \.
-                  /             |   *         \.
-                             .  |        .
-                                |
-                                |
-                Get outside and enjoy that sunshine!""")
-            elif self.short_summary[i] == "Partly Cloudy" or self.short_summary[i] == "Mostly Sunny" \
-                    or self.short_summary[i] == "Partly Sunny":
-                print(self.short_summary[i])
-                print(r"""                 .
-                      |					
-             .               /		     /	
-              \       I     /		   /		
-                          /           /
-                \  ,     /           /
-                 \    (`  ).       /            _
-         -  --==   \  (     ).=-- /          .+(`  )`.
-                     (       '`./         :(   .    )
-                .+(`(      .   )     .--  `.  (    ) )
-               ((    (..__.:'-'   .=(   )   ` _`  ) )
-        `.     `(       ) )       (   .  )     (   )  ._
-          )      ` __.:'   )     (   (   ))     `-'.:(`  )
-        )  )  ( )       --'       `- __.'         :(      ))
-        .-'  (_.'          .')                    `(    )  ))
-                          (_  )                     ` __.:'
-
-        --..,___.--,--'`,---..-.--+--.,,-,,..._.--..-._.-a:f--.
-
-                Shade and sun, what could be better!""")
-            elif self.short_summary[i] == "Snow Showers Likely":
-                print(r"""
-                                    ()
-                                    /\
-                                   //\\
-                                  <<  >>
-                              ()   \\//   ()
-                    ()._____   /\   \\   /\   _____.()
-                       \.--.\ //\\ //\\ //\\ /.--./
-                        \\__\\/__\//__\//__\\/__//
-                         '--/\\--//\--//\--/\\--'
-                            \\\\///\\//\\\////
-                        ()-= >>\\< <\\> >\\<< =-()
-                            ////\\\//\\///\\\\
-                         .--\\/--\//--\//--\//--.
-                        //""/\\""//\""//\""//\""\\
-                       /'--'/ \\// \\// \\// \'--'\
-                     ()`'''`   '\/   //   \/   `'""`().
-                              '()   //\.\.   ()
-                                  '<<  >>
-                                    \\//
-                                     \/
-                                     ()
-                    Do you wanna to build a snowman?""")
-            elif self.short_summary[i] == "Rain Showers" or self.short_summary[i] == "Chance Rain Showers" \
-                    or self.short_summary[i] == "Rain Showers Likely":
-                print(self.short_summary[i])
-                print(r"""
-             |       |        |       | |
-         ' |   |   |     '  |      '      
-                      |           |     | 
-         '     |  _,..--I--..,_ |         
-           / _.-`` _,-`   `-,_ ``-._ \   .
-             `-,_,_,.,_   _,.,_._,-`      
-        |  | '   '     `Y` __ '     '     
-          '|        ,-. I /  \       |  | 
-         |    |    /   )I \  /     '   |  
-        '  '      /   / I_.""._           
-        |  |    ,l  .'..`      `.   ' |  |
-         |     / | /   \        l         
-              /, '"  .  \      ||   |   | 
-         |  ' ||      |"|      ||   |     
-        '     ||      | |      ||       | 
-        |     \|      | '.____,'/  |  |   
-           |   |      |  |    |F   '    | 
-         | '   |      |  | |\ |     ' |   
-               |      |  | || |      |    
-        |  |   |      |  | || |    |    | 
-               |      |  | || |      |    
-         ' |   '.____,'  \_||_/   |    |  
-                 |/\|    [_][_]      |    
-        ''''''''''''''''''''''''''''''''''
-        Today's a great day for a cozy movie :)""")
-            elif self.short_summary[i] == "Mostly Cloudy":
-                print(self.short_summary[i])
-                print(r"""
-                                    _                                  
-                      (`  ).                   _           
-                     (     ).              .:(`  )`.       
-                    _(       '`.          :(   .    )      
-                .=(`(      .   )     .--  `.  (    ) )      
-               ((    (..__.:'-'   .+(   )   ` _`  ) )                 
-        `.     `(       ) )       (   .  )     (   )  ._   
-          )      ` __.:'   )     (   (   ))     `-'.-(`  ) 
-        )  )  ( )       --'       `- __.'         :(      )) 
-        .-'  (_.'          .')                    `(    )  ))
-                          (_  )                     ` __.:'          
-
-        --..,___.--,--'`,---..-.--+--.,,-,,..._.--..-._.-.:.--.
-        'I've got sunshine, on a cloudy day,' The Temptations.""")
-            else:
-                print(self.short_summary[i])
-            print('__________________________________________')
-            i += 1
-        # Give credit to the artists.
-        print('Ascii art from https://www.asciiart.eu/nature/clouds')
 
     def graph(self):
         """
@@ -244,21 +116,20 @@ class Weather:
         gui = graphics('Weather')
         w = gui.primary.winfo_screenwidth()
         h = gui.primary.winfo_screenheight()
-        # Locations is a list of the y-coordinates for the weather for each day of the week.
+        difference = int((w * (3 / 1440)) - 3)
         locations = [(h / 2) - 265, (h / 2) - 265 + 90, (h / 2) - 265 + 2 * 90, (h / 2) - 265 + 3 * 90, (h / 2) - 265
                      + 4 * 90, (h / 2) - 265 + 5 * 90]
-        print(w, h)
-        difference = int((w * (3 / 1440)) - 3)
-        # choosing the background image based on if isDaytime in first period of data is true or false.
         if data["properties"]["periods"][1]["isDaytime"]:
             gui.image(0, 0, 1, 3 - difference, "sky.png")
-            for i in range(6):
-                gui.text((w / 2) + 270, 75, 'Type your nearest National Weather Service city:', 'black', 14)
         else:
             gui.image(0, 0, 1, 3 - difference, "night.png")
-            gui.text((w / 2) + 270, 75, 'Type your nearest National Weather Service city:', 'lavender blush', 14)
+        # create the logo for pink sky
+        gui.image((w / 2) - 155, 0, 1, 2, "pngegg.png")
+        gui.image((w / 2) - 25, 50, 1, 30, "moon.png")
+        gui.image((w / 2) - 105, 100, 1, 5, "l.png")
+        # A = '<KeyPress>'
+        # gui.set_keyboard_action((gui.text((w / 2) + 275, 100, A, 'black', 17)).A)
         # two rectangles to organize the information for the current weekday and the upcoming weekdays.
-        print(w - (w * (156 / 1440)) - 515)
         gui.rectangle((w / 2) + 49, (h / 2) - 265, 515, 545, 'lavender blush')
         gui.rectangle((w / 2) - 564, (h / 2) - 265, 515, 545, 'lavender blush')
         # loops through the list of short summaries for the next 6 days, and appends the images and scales lists.
@@ -345,12 +216,13 @@ class Weather:
         # this loop checks if there are any repeated images by setting previous_image to image1 and appending
         # a specific file in images for that day of the week to printing
         # if the current image is equal to the previous image.
-        for key, value in images.items():
+        copy = images.copy()
+        for key, value in copy.items():
             if key[:6] != 'repeat':
                 im = value.pop(0)
                 printing.append(im)
             else:
-                im = images[value].pop(0)
+                im = copy[value].pop(0)
                 printing.append(im)
         j = 1
         while j < len(locations) + 1:
@@ -402,7 +274,8 @@ class Weather:
         # Display the current day of the week, high and low temp, and fast and slow wind speed.
         for i in range(6):
             gui.text((w / 2) - 565, (h / 2) - 55, self.day_of_week[0].capitalize(), 'medium violet red', 30)
-            gui.text((w / 2) - 565, (h / 2) + 5, 'High: ' + str(self.daily_high[0]) + '........' + self.short_summary[0],
+            gui.text((w / 2) - 565, (h / 2) + 5,
+                     'High: ' + str(self.daily_high[0]) + '........' + self.short_summary[0],
                      'dark orchid', 17)
             gui.text((w / 2) - 565, (h / 2) + 40, 'Low: ' + str(self.daily_low[0]), 'dark orchid', 17)
             gui.text((w / 2) - 564, (h / 2) + 95, 'High Wind Speed: ' + str(self.fast_wind[0]) + ' mph', 'dark orchid',
@@ -423,40 +296,6 @@ class Weather:
             else:
                 sunset = str(moon_data['days'][0]['sunset'])
                 gui.text((w / 2) - 564, (h / 2) + 215, 'Sunset: ' + ' ' + sunset + ' PM', 'dark orchid', 17)
-        # gui.rectangle((w / 2) - 609, (h / 2) - 320, 1206, 730, 'light slate blue')
-        gui.rectangle(0, (h / 2) - 265, w, 630, 'snow')
-        gui.image(0, (h / 2) - 265, 1, 1, 'cwa.png')
-        gui.text((w / 2) + 250, (h / 2) - 265, 'Welcome to Pink Sky!', 'medium violet red', 27)
-        gui.text(825, (h / 2) - 265, '\n\n\n'
-                                     'My name is Vivian Welch; I am the creator of this program.\n'
-                                     'My dream is to code the graphics for the National Weather\n'
-                                     'Service, providing fun and reliable sources of your daily weather.\n'
-                                     '\n'
-                                     'Pink Sky pulls data from the Weather Service, visualizing some of\n'
-                                     'the most accurate weather data in the country. There are\n'
-                                     '131 National Weather Service locations, including offices in\n'
-                                     'Alaska, Hawai\'i, Puerto Rico, and Guam.\n'
-                                     '\n'
-                                     'When choosing your local National Weather Service office, it\'s\n'
-                                     'important to recognize that some offices cover regions that\n'
-                                     'span multiple states.\n'
-                                     '\n'
-                                     'I\'m from New Jersey, but my forecasts come from the Philadelphia\n'
-                                     'weather station.\n'
-                                     '\n'
-                                     'For more information about National Weather Service locations,\n'
-                                     'visit https://www.weather.gov/srh/nwsoffices#.\n',
-                 'black', 17)
-        # create the logo for pink sky
-        gui.image((w / 2) - 155, 0, 1, 2, "pngegg.png")
-        gui.image((w / 2) - 25, 50, 1, 30, "moon.png")
-        gui.image((w / 2) - 105, 100, 1, 5, "l.png")
-        gui.rectangle((w / 2) + 270, 100, 380, 35, 'snow')
-        # A = '<KeyPress>'
-        # gui.set_keyboard_action((gui.text((w / 2) + 275, 100, A, 'black', 17)).A)
-        gui.image(0, (h / 2) - 340, 1, 30, 'inkpx-word-art.png')
-        gui.image((w / 2) + 110, (h / 2) - 265, 1, 8, 'smile.png')
-        gui.image(w - 107, (h / 2) - 265, 1, 8, 'smile2.png')
         # This method displays all the graphics planned above.
         gui.draw()
 
@@ -482,6 +321,50 @@ def main():
 
     :return N/A: calls the weather class and its functions with new values for each object created as lists by main().
     """
+    go = graphics('Weather')
+    w = go.primary.winfo_screenwidth()
+    h = go.primary.winfo_screenheight()
+    difference = int((w * (3 / 1440)) - 3)
+    # choosing the background image based on if isDaytime in first period of data is true or false.
+    go.image(0, 0, 1, 3 - difference, "sky.png")
+    go.rectangle(0, (h / 2) + 365, w, 35, 'yellow')
+    go.text((w / 2) - 570, (h / 2) + 370, 'When you\'ve found your nearest National Weather Service city '
+                                          'on the map, ex out of the tab, and type it into the terminal.', 'black', 17)
+    # gui.rectangle((w / 2) - 609, (h / 2) - 320, 1206, 630-730, 'light slate blue')
+    go.rectangle(0, (h / 2) - 265, w, 630, 'snow')
+    go.image(0, (h / 2) - 265, 1, 1, 'cwa.png')
+    go.text((w / 2) + 250, (h / 2) - 265, 'Welcome to Pink Sky!', 'medium violet red', 27)
+    go.text(825, (h / 2) - 265, '\n\n\n'
+                                'My name is Vivian Welch; I am the creator of this program.\n'
+                                'My dream is to code the graphics for the National Weather\n'
+                                'Service, providing fun and reliable sources of your daily weather.\n'
+                                '\n'
+                                'Pink Sky pulls data from the Weather Service, visualizing some of\n'
+                                'the most accurate weather data in the country. There are\n'
+                                '131 National Weather Service locations, including offices in\n'
+                                'Alaska, Hawai\'i, Puerto Rico, and Guam.\n'
+                                '\n'
+                                'When choosing your local National Weather Service office, it\'s\n'
+                                'important to recognize that some offices cover regions that\n'
+                                'span multiple states.\n'
+                                '\n'
+                                'I\'m from New Jersey, but my forecasts come from the Philadelphia\n'
+                                'weather station.\n'
+                                '\n'
+                                'For more information about National Weather Service locations,\n'
+                                'visit https://www.weather.gov/srh/nwsoffices#.\n',
+            'black', 17)
+    # create the logo for pink sky
+    go.image((w / 2) - 155, 0, 1, 2, "pngegg.png")
+    go.image((w / 2) - 25, 50, 1, 30, "moon.png")
+    go.image((w / 2) - 105, 100, 1, 5, "l.png")
+    # A = '<KeyPress>'
+    # gui.set_keyboard_action((gui.text((w / 2) + 275, 100, A, 'black', 17)).A)
+    go.image(0, (h / 2) - 340, 1, 30, 'inkpx-word-art.png')
+    go.image((w / 2) + 110, (h / 2) - 265, 1, 8, 'smile.png')
+    go.image(w - 107, (h / 2) - 265, 1, 8, 'smile2.png')
+    go.draw()
+    change_url()
 
     def high_low(s, e):
         """
@@ -600,7 +483,6 @@ def main():
     # Call the class Weather, with the created lists for each object
     go = Weather(days_of_week, daily_high, daily_lows, short_summaries, fast_winds, slow_winds)
     # Call the text based visualization function and the graphics function.
-    go.draw_forecast()
     go.graph()
 
 
