@@ -1,1 +1,4 @@
 # CSC110_HNRS
+This program pulls some of the most accurate weather JSON data in the United States, directly from the National Weather Serivce, and displays it in a fun and userfriendly format. The program is called Pink Sky, because in the daytime, when key 'isDayTime' == True, the background for the app displays a pink skyline. When 'isDayTime' == False, the program displays a stary background. Pink Sky is coded entirely in Python, using a GUI (graphical user interface) to display the graphics. 
+
+This program has two GUI canvases active; the first is the home page, displaying a short introduction to the program and offers a map pulled from the national weather serivce to help the user find their nearest national weather serivice office. Once the user finds their closest city and state, the user is prompted to ex out of the initial canvas and type the console. 
